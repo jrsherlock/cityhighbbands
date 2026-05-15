@@ -1,0 +1,157 @@
+---
+import Base from '../../layouts/Base.astro';
+
+const DONATE_URL = 'https://www.myschoolbucks.com/ver2/prdembd?ref=ZZHVZSLK0W05OC7_ZZ5WAHBE5K2Q1LH';
+
+const officers = [
+  { role: 'President',  name: 'Jim Sherlock',     email: 'jrsherlock@gmail.com' },
+  { role: 'Vice Pres.', name: 'Mary Kenyon',      email: 'marygkenyon@gmail.com' },
+  { role: 'Secretary',  name: 'Andrea Gugliuzza', email: 'agugliuzza@gmail.com' },
+  { role: 'Treasurer',  name: 'Jenni Mettemeyer', email: 'mettemeyer.jennifer@iowacityschools.org' },
+];
+
+const meetings = [
+  { date: '2025-09-10', label: 'Wednesday · September' },
+  { date: '2025-10-01', label: 'Wednesday · October' },
+  { date: '2025-11-12', label: 'Wednesday · November' },
+  { date: '2026-01-14', label: 'Wednesday · January' },
+  { date: '2026-02-18', label: 'Wednesday · February' },
+  { date: '2026-03-00', label: 'TBD · March' },
+  { date: '2026-04-01', label: 'Wednesday · April' },
+  { date: '2026-05-27', label: 'Wednesday · May' },
+];
+
+const roles = [
+  { name: 'Trailer Crew',     desc: 'Load and unload the band trailer for marching events and away concerts. Mornings + late evenings on game days.' },
+  { name: 'Hospitality',      desc: 'Stock dressing rooms with water and snacks for festival days; coordinate post-concert receptions.' },
+  { name: 'Uniform Care',     desc: 'Fittings, alterations, and end-of-season cleaning. The behind-the-scenes work that lets 250 musicians look like one ensemble.' },
+  { name: 'Travel Chaperones', desc: 'Ride along on out-of-town trips. District background check required; BACH covers training.' },
+  { name: 'Parking Lot Crew', desc: 'Help run the parking lot clean-up shifts that fund the program. A handful of mornings per year, biggest single fundraiser.' },
+  { name: 'Concert Volunteers', desc: 'Door, programs, ushering. The easy on-ramp for new band parents — show up, smile, learn the program.' },
+];
+---
+<Base title="Support — Iowa City High Bands">
+
+<section class="page-hero">
+  <div class="wrap">
+    <div class="page-hero__inner">
+      <div class="meta">Support the Bands</div>
+      <h1>It takes a community to fill a band room.</h1>
+      <p class="lede">Donations, volunteer hours, and parking-lot mornings are what keep the City High Bands a program of national-caliber opportunity for every student who walks through the door.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="donate-cta">
+      <div class="donate-cta__copy">
+        <div class="meta">Donate</div>
+        <h2>Every gift goes directly to students.</h2>
+        <p>Gifts to BACH fund instruments and music, underwrite travel for festivals like the Iowa Bandmasters Conference and UNI Invitational, and ensure that no student is priced out of an experience the program offers.</p>
+        <p style="color: var(--muted); font-size: 0.95rem;">BACH is a 501(c)(3); contributions are tax-deductible to the fullest extent of the law.</p>
+      </div>
+      <aside class="donate-cta__panel">
+        <h3>Give to City High Bands</h3>
+        <p>Secure giving through MySchoolBucks. Existing donation flow preserved from cityhighband.com.</p>
+        <a class="btn" href={DONATE_URL}>Donate now</a>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section class="section section--band">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-head__title">
+        <div class="meta">Band Associates of City High</div>
+        <h2>Meet BACH.</h2>
+      </div>
+    </div>
+
+    <p style="max-width: 64ch; font-size: 1.05rem; line-height: 1.65; margin-bottom: 2.5rem;">
+      BACH is the parent and community organization that supports the City High Band program. We're inclusionary — every student at City High should benefit from what the band program offers — and we work alongside the directors to make sure that's true. We meet monthly during the school year, in the Band Room, at 7 PM.
+    </p>
+
+    <div class="officers-grid">
+      {officers.map(o => (
+        <div class="officer">
+          <div class="officer__role">{o.role}</div>
+          <div class="officer__name">{o.name}</div>
+          <a href={`mailto:${o.email}`}>{o.email}</a>
+        </div>
+      ))}
+    </div>
+
+    <div class="section-head" style="margin-top: 4rem;">
+      <div class="section-head__title">
+        <div class="meta">2025 – 2026</div>
+        <h2>BACH meeting schedule.</h2>
+      </div>
+      <a class="section-head__more" href="https://drive.google.com/drive/folders/1nTnahKuKLhDyU8wXqlgM3T2xRlfBnd6r?usp=drive_link">Meeting notes →</a>
+    </div>
+
+    <div class="meeting-grid">
+      {meetings.map(m => {
+        const [, mon, day] = m.date.split('-');
+        const monLabel = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'][parseInt(mon, 10) - 1];
+        const dayLabel = day === '00' ? 'TBD' : String(parseInt(day, 10));
+        return (
+          <div class="meeting">
+            <div class="meeting__date">
+              {dayLabel}
+              <small>{monLabel}</small>
+            </div>
+            <div class="meeting__day">
+              {m.label.split(' · ')[0]}
+              <small>{m.label.split(' · ')[1]} · 7 PM, Band Room</small>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-head__title">
+        <div class="meta">Volunteer roles</div>
+        <h2>Specific asks, real impact.</h2>
+      </div>
+    </div>
+
+    <p style="max-width: 60ch; color: var(--muted); margin-bottom: 2rem;">
+      "Sign up to help" is too vague. Below are the actual jobs BACH organizes. Pick one that fits your schedule — most need a few hours, not a season-long commitment.
+    </p>
+
+    <div class="volunteer-roles">
+      {roles.map(r => (
+        <div class="volunteer-role">
+          <h3>{r.name}</h3>
+          <p>{r.desc}</p>
+        </div>
+      ))}
+    </div>
+
+    <p style="margin-top: 2.5rem;">
+      <a class="btn btn-outline" href="mailto:band.associates.chs@gmail.com">Email BACH to volunteer</a>
+    </p>
+  </div>
+</section>
+
+<section class="section section--band">
+  <div class="wrap">
+    <div class="sponsor-tease">
+      <div>
+        <div class="sponsor-tease__phase">Phase 2</div>
+        <h3>Corporate sponsorship.</h3>
+        <p>Tiered corporate sponsorship — concert program ads, trailer-decal recognition, season-long social mentions — coming in 2026. Iowa City businesses interested in early conversations are welcome to reach out now.</p>
+      </div>
+      <a class="btn btn-outline" href="mailto:jrsherlock@gmail.com">Start the conversation</a>
+    </div>
+  </div>
+</section>
+
+</Base>

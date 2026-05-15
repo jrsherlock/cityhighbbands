@@ -1,0 +1,88 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const directors = await getCollection('directors');
+  return directors.map(d => ({ params: { slug: d.slug }, props: { director: d } }));
+}
+
+const { director } = Astro.props;
+const d = director.data;
+
+// "Conducts" map — derived from the directors' bios; cleanest as a small
+// hand-curated table here than trying to parse English prose.
+const CONDUCTS: Record<string, { slug: string; name: string }[]> = {
+  'mr-mike-kowbel': [
+    { slug: 'wind-ensemble', name: 'Wind Ensemble' },
+    { slug: 'concert-band',  name: 'Concert Band' },
+    { slug: 'jazz-workshop', name: 'Jazz Workshop' },
+    { slug: 'marching-band', name: 'Little Hawk Marching Band' },
+  ],
+  'mr-aaron-ottmar': [
+    { slug: 'symphony-band',    name: 'Symphony Band' },
+    { slug: 'jazz-ensemble',    name: 'Jazz Ensemble' },
+    { slug: 'jazz-lab',         name: 'Jazz Lab' },
+    { slug: 'jazz-collective',  name: 'Jazz Collective' },
+    { slug: 'marching-band',    name: 'Little Hawk Marching Band' },
+  ],
+};
+
+const conducts = CONDUCTS[director.slug] ?? [];
+
+// Body is plain markdown — split on blank lines, drop chrome
+// (heading, embedded image markdown, standalone mailto link), then clean.
+const rawBody = (director.body ?? '').trim();
+const paragraphs = rawBody
+  .split(/\n\s*\n/)
+  .map(p => p.trim())
+  .filter(p => p
+    && !p.startsWith('# ')
+    && !p.startsWith('![')
+    && !/^\[[^\]]+\]\(mailto:/.test(p)
+  )
+  .map(p => p
+    .replace(/\*\*/g, '')          // strip bold markers
+    .replace(/\\\*+/g, '')         // strip escaped asterisks
+    .replace(/\s+/g, ' ')          // collapse internal whitespace
+    .trim()
+  )
+  .filter(Boolean);
+
+const shortName = d.name.replace(/^Mr\.\s+/, '').replace(/^Ms\.\s+/, '');
+---
+<Base title={`${shortName} — Iowa City High Bands`}>
+
+<section class="director-hero">
+  <div class="wrap">
+    <div class="director-hero__grid">
+      <div class="director-hero__photo">
+        {d.photo && <img src={d.photo} alt={d.name} />}
+      </div>
+      <div>
+        <div class="crumb"><a href="/directors">Directors</a></div>
+        <h1>{d.name}</h1>
+        <div class="director-hero__role">{d.role}</div>
+        <div class="director-hero__contact">
+          {d.email && <a href={`mailto:${d.email}`}>{d.email}</a>}
+        </div>
+        {conducts.length > 0 && (
+          <div class="director-hero__conducts">
+            <div class="meta">Conducts</div>
+            <ul>
+              {conducts.map(c => <li><a href={`/ensembles/${c.slug}`}>{c.name}</a></li>)}
+            </ul>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <article class="bio">
+    {paragraphs.map(p => <p>{p}</p>)}
+  </article>
+</div>
+
+</Base>

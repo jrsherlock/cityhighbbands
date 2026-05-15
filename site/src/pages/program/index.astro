@@ -1,0 +1,126 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const ensembles = await getCollection('ensembles');
+const ORDER = ['wind-ensemble','symphony-band','concert-band','marching-band','jazz-ensemble','jazz-lab','jazz-collective','jazz-workshop'];
+const ordered = ORDER.map(slug => ensembles.find(e => e.slug === slug)!).filter(Boolean);
+
+const directors = await getCollection('directors');
+---
+<Base title="The Program — Iowa City High Bands">
+
+<section class="page-hero">
+  <div class="wrap">
+    <div class="page-hero__inner">
+      <div class="meta">The Program</div>
+      <h1>A program led by educators, in service of musicians.</h1>
+      <p class="lede">Iowa City High Bands is the wind, percussion, and jazz program at Iowa City High School — a department whose growth, competitive results, and culture have, over the past several years, pulled it into the top tier of public-school music programs in Iowa.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="facts-row">
+      <div class="fact"><div class="fact__num">250+</div><div class="fact__label">student musicians</div></div>
+      <div class="fact"><div class="fact__num">8</div><div class="fact__label">ensembles</div></div>
+      <div class="fact"><div class="fact__num">45</div><div class="fact__label">documented seasons</div></div>
+      <div class="fact"><div class="fact__num">23</div><div class="fact__label">2024 All-State selections</div></div>
+    </div>
+
+    <div class="program-pillars">
+      <div class="pillar">
+        <h3>Inclusive on entry</h3>
+        <p>Every City High student who wants to play in a band can. Placement auditions sort musicians into the right ensemble — they don't gate-keep participation.</p>
+      </div>
+      <div class="pillar">
+        <h3>Serious on craft</h3>
+        <p>Wind Ensemble has been selected to perform at the Iowa Bandmasters Conference and UNI Invitational. Concert, Symphony, and Concert Band consistently earn Division 1 ratings at state.</p>
+      </div>
+      <div class="pillar">
+        <h3>Anchored by tradition</h3>
+        <p>"The School That Leads" is a half-century-old motto, not a marketing line. The program's continuous archive of marching shows, repertoire, and honor-band selections goes back to 1980.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--band">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-head__title">
+        <div class="meta">Co-Directors of Bands</div>
+        <h2>Mike Kowbel &amp; Aaron Ottmar.</h2>
+      </div>
+      <a class="section-head__more" href="/directors">Director bios →</a>
+    </div>
+    <div class="directors-index" style="padding: 0;">
+      {directors.map(d => (
+        <a class="director-card" href={`/directors/${d.slug}`}>
+          <div class="director-card__photo">
+            {d.data.photo && <img src={d.data.photo} alt={d.data.name} loading="lazy" />}
+          </div>
+          <div>
+            <h3>{d.data.name.replace(/^Mr\.\s+/, '')}</h3>
+            <div class="director-card__role">{d.data.role}</div>
+            <div class="director-card__excerpt">
+              {d.slug === 'mr-mike-kowbel'
+                ? "Conducts the Wind Ensemble, Concert Band, and Jazz Workshop. Co-directs the Little Hawk Marching Band. Commission Committee Chair, SEIBA."
+                : "Conducts the Symphony Band, Jazz Ensemble, Jazz Lab, and Jazz Collective. Co-directs the Little Hawk Marching Band. Iowa City High School Class of 2011."}
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-head__title">
+        <div class="meta">Eight ensembles</div>
+        <h2>Eight rooms. Eight homes.</h2>
+      </div>
+      <a class="section-head__more" href="/ensembles">All ensembles →</a>
+    </div>
+    <div class="ensembles-grid">
+      {ordered.map(e => (
+        <a class="ensemble-card" href={`/ensembles/${e.slug}`}>
+          <div class="ensemble-card__img" aria-hidden="true"></div>
+          <div class="ensemble-card__cat">{e.data.category.charAt(0).toUpperCase() + e.data.category.slice(1)}</div>
+          <div class="ensemble-card__title">{e.data.name}</div>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section class="section section--band">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-head__title">
+        <div class="meta">For prospective students</div>
+        <h2>How students join.</h2>
+      </div>
+    </div>
+    <div class="program-pillars">
+      <div class="pillar">
+        <h3>From middle school</h3>
+        <p>Most City High musicians come up through Iowa City's middle school feeder programs. If you played in 8th-grade band, you have a seat waiting. No audition is required to enroll in band as a freshman.</p>
+      </div>
+      <div class="pillar">
+        <h3>Transferring in</h3>
+        <p>If you're moving to City High mid-year or from out of district, contact either director. Placement is straightforward; the directors will find the right ensemble for you in a single conversation.</p>
+      </div>
+      <div class="pillar">
+        <h3>Trying a new instrument</h3>
+        <p>Switching instruments — or picking one up — is welcome. Private lessons are available with the directors and a roster of area teachers. The program loans school instruments for less-common voices.</p>
+      </div>
+    </div>
+    <p style="margin-top: 3rem;"><a href="/contact" class="btn btn-outline">Get in touch with a director</a></p>
+  </div>
+</section>
+
+</Base>

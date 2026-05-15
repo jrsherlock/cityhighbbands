@@ -1,0 +1,81 @@
+---
+import Base from '../../layouts/Base.astro';
+
+// Curated subset of the 968-image archive — the largest files tend to be the
+// real photographs (vs icons / page chrome) and survive at meaningful size.
+// In production this would be a content collection or SmugMug embed; for the
+// pitch we just pick a believable assortment to demonstrate the layout.
+const FEATURE = '/assets/images/89b1bedeff-image.jpg';
+const gallery = [
+  { src: '/assets/images/f519e0c70a-image.jpg', cap: 'Wind Ensemble · IBA Conference' },
+  { src: '/assets/images/af569a9bb6-image.jpg', cap: 'Marching Band · State Festival' },
+  { src: '/assets/images/3684711668-image.jpg', cap: 'Jazz Ensemble · Iowa Jazz Champs' },
+  { src: '/assets/images/dc11761fce-image.jpg', cap: 'Symphony Band · Mid-Winter Concert' },
+  { src: '/assets/images/0592940689-image.jpg', cap: 'Concert Band · Spring' },
+  { src: '/assets/images/9774c8df5a-image.jpg', cap: 'Marching Band · Friday night' },
+  { src: '/assets/images/78f499cdaf-image.jpg', cap: 'Jazz Lab · in rehearsal' },
+  { src: '/assets/images/b339f1e68c-image.jpg', cap: 'Wind Ensemble · Opstad Auditorium' },
+  { src: '/assets/images/d4e891204c-image.jpg', cap: 'Jazz Workshop · sectional' },
+  { src: '/assets/images/7d36869b08-image.jpg', cap: 'Marching Band · home game' },
+  { src: '/assets/images/1f348ae932-image.jpg', cap: 'Drum Majors' },
+  { src: '/assets/images/4ef1a89540-image.jpg', cap: 'All-State auditions' },
+  { src: '/assets/images/ac5534edd8-image.jpg', cap: 'Pre-game · "Little Hawks"' },
+  { src: '/assets/images/d8e68ae90b-image.jpg', cap: 'Sousa stand · Stars and Stripes' },
+  { src: '/assets/images/4878485a9c-image.jpg', cap: 'Wind Ensemble percussion' },
+  { src: '/assets/images/30df2d8740-image.jpg', cap: 'Senior recognition' },
+];
+---
+<Base title="Media — Iowa City High Bands">
+
+<section class="page-hero">
+  <div class="wrap">
+    <div class="page-hero__inner">
+      <div class="meta">Media</div>
+      <h1>What it looks like, what it sounds like.</h1>
+      <p class="lede">Photography and performance recordings from across the program — concerts, festivals, marching season, and the in-between moments that make a band a band.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="photo-feature" style={`background-image: url(${FEATURE});`} role="img" aria-label="City High Bands performing"></div>
+
+    <div class="section-head">
+      <div class="section-head__title">
+        <div class="meta">2024 – 2025</div>
+        <h2>Season highlights.</h2>
+      </div>
+      <a class="section-head__more" href="#">Full archive →</a>
+    </div>
+
+    <div class="photo-grid">
+      {gallery.map(g => (
+        <figure>
+          <img src={g.src} alt={g.cap} loading="lazy" />
+          <figcaption>{g.cap}</figcaption>
+        </figure>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section class="section section--band">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-head__title">
+        <div class="meta">Performance recordings</div>
+        <h2>Watch and listen.</h2>
+      </div>
+      <a class="section-head__more" href="#">YouTube channel →</a>
+    </div>
+
+    <div class="video-embed">A live concert stream embeds here.</div>
+
+    <p style="margin-top: 2rem; max-width: 60ch; color: var(--muted);">
+      In production: dedicated YouTube channel for live-streamed concerts, the Wind Ensemble's IBA performance, jazz festival sets, and pre-game shows. Embedded directly on this page for desktop viewing or accessible via the channel link for mobile and TV.
+    </p>
+  </div>
+</section>
+
+</Base>

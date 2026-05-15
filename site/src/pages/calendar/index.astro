@@ -1,0 +1,111 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const events = await getCollection('events');
+// Show only upcoming events on the live site (we keep past events in the
+// collection so they aren't orphaned; the renderer filters by today's date).
+const TODAY = new Date().toISOString().slice(0, 10);
+const upcoming = events
+  .filter(e => e.data.date >= TODAY)
+  .sort((a, b) => a.data.date.localeCompare(b.data.date));
+
+// Format helpers
+const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function parts(iso: string) {
+  const [y, m, d] = iso.split('-').map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d));
+  return {
+    mon: MON[m - 1],
+    day: d,
+    weekday: dt.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' }),
+    pretty: dt.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' }),
+  };
+}
+---
+<Base title="Calendar — Iowa City High Bands">
+
+<section class="page-hero">
+  <div class="wrap">
+    <div class="page-hero__inner">
+      <div class="meta">Calendar</div>
+      <h1>What's happening this season.</h1>
+      <p class="lede">Concerts, festivals, marching events, and BACH meetings. Subscribe to the live calendar to add everything to your phone in one tap.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap" style="max-width: 920px;">
+    <div class="section-head">
+      <div class="section-head__title">
+        <div class="meta">Upcoming · {upcoming.length} events</div>
+        <h2>Save the dates.</h2>
+      </div>
+    </div>
+
+    {upcoming.length === 0 ? (
+      <p class="lede">No upcoming events on the calendar. Check back soon — the directors post the season schedule in August.</p>
+    ) : (
+      <ul class="events-list">
+        {upcoming.map(e => {
+          const p = parts(e.data.date);
+          return (
+            <li>
+              <div class="events-list__date" aria-hidden="true">
+                <span>{p.mon}</span>
+                <strong>{p.day}</strong>
+              </div>
+              <div class="events-list__main">
+                <h3>
+                  {e.data.program_title && <span class="program-title">"{e.data.program_title}"</span>}
+                  {e.data.title}
+                </h3>
+                <div class="events-list__meta">
+                  <span>{p.weekday}</span>
+                  {e.data.time && <span>· {e.data.time}</span>}
+                  {e.data.venue && <span>· {e.data.venue}</span>}
+                  {e.data.free && <span>· Free admission</span>}
+                </div>
+                {e.data.note && <div class="events-list__meta" style="margin-top: 0.35rem; font-style: italic;">{e.data.note}</div>}
+                {e.data.ensemble_label && <div class="events-list__ensemble">{e.data.ensemble_label}</div>}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    )}
+  </div>
+</section>
+
+<section class="section section--band">
+  <div class="wrap" style="max-width: 1080px;">
+    <div class="section-head">
+      <div class="section-head__title">
+        <div class="meta">Live calendar</div>
+        <h2>Subscribe once. Stay current forever.</h2>
+      </div>
+    </div>
+
+    <div class="calendar-embed-wrap">
+      <div class="calendar-embed-placeholder">
+        <div class="calendar-embed-placeholder__inner">
+          <div class="meta">Phase 1 placeholder</div>
+          <p style="margin: 0 0 0.6rem; font-family: 'Fraunces', serif; font-size: 1.15rem;">A live Google Calendar embeds here.</p>
+          <p style="margin: 0; color: var(--muted); font-size: 0.9rem;">The directors maintain a single shared calendar; this view auto-updates whenever they add or edit an event.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="subscribe-row">
+      <a class="btn btn-outline" href="#" aria-disabled="true">Add to Google Calendar</a>
+      <a class="btn btn-outline" href="#" aria-disabled="true">Add to Apple Calendar (.ics)</a>
+      <a class="btn btn-outline" href="#" aria-disabled="true">Add to Outlook</a>
+    </div>
+    <p style="margin-top: 1.5rem; color: var(--muted); font-size: 0.9rem;">
+      Subscribe links activate once a shared calendar URL is plugged into the site.
+    </p>
+  </div>
+</section>
+
+</Base>

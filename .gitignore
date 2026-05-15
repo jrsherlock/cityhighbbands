@@ -1,0 +1,24 @@
+# Original site export (75MB). Re-extract via `unzip` if needed.
+cityhighband-export.zip
+
+# Duplicate of images already living in site/public/assets/images/.
+# site/public is the canonical home of deployable assets.
+export/chb_export/assets/
+
+# Node / Astro
+node_modules/
+dist/
+.astro/
+.wrangler/
+
+# Generated reports
+migration-report.json
+
+# OS / editor noise
+.DS_Store
+*.log
+.vscode/
+.idea/
+
+# Local previews
+/private/tmp/

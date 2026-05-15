@@ -1,0 +1,209 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const seasons = await getCollection('seasons');
+  // Sort newest first so adjacent prev/next links are intuitive
+  seasons.sort((a, b) => b.data.start_year - a.data.start_year);
+  return seasons.map((s, idx) => ({
+    params: { year_range: s.slug },
+    props: {
+      season: s,
+      newer: seasons[idx - 1] ?? null,
+      older: seasons[idx + 1] ?? null,
+    },
+  }));
+}
+
+const { season, newer, older } = Astro.props;
+const d = season.data;
+
+const clean = (s: string) => (s ?? '').replace(/\\+\*+/g, '').replace(/\*+/g, '').trim();
+const cleanList = (xs: string[]) => xs.map(clean).filter(Boolean);
+
+const marchingShow = clean(d.marching?.show ?? '');
+const marchingResults = cleanList((d.marching?.results ?? []) as string[]);
+const marchingNotes = cleanList((d.marching?.notes ?? []) as string[]);
+
+// Convert the ensemble-keyed result map into ordered tuples for stable rendering.
+const ENS_ORDER = ['wind ensemble','symphony band','concert band','jazz ensemble','jazz lab','jazz collective','jazz workshop'];
+const ensembleEntries = ENS_ORDER
+  .map(k => [k, d.ensembles?.[k]] as const)
+  .filter(([, v]) => Array.isArray(v) && v.length > 0)
+  .map(([k, v]) => [k, cleanList(v as string[])] as const);
+
+const titleCase = (s: string) => s.replace(/\b\w/g, c => c.toUpperCase());
+---
+<Base title={`${d.year_range.replace('-', '–')} — Iowa City High Bands`}>
+
+<section class="season-hero">
+  <div class="wrap">
+    <div class="crumb"><a href="/history">History</a> · {d.year_range.replace('-', '–')}</div>
+    <div class="season-hero__year">{d.year_range.replace('-', ' – ')}</div>
+    {marchingShow && <div class="season-hero__theme">Marching show: "{marchingShow}"</div>}
+    <div class="season-hero__nav">
+      <div>
+        {older
+          ? <a href={`/history/${older.slug}`}>← {older.data.year_range.replace('-', '–')}</a>
+          : <span>Earliest season</span>}
+      </div>
+      <div><a href="/history">All seasons</a></div>
+      <div>
+        {newer
+          ? <a href={`/history/${newer.slug}`}>{newer.data.year_range.replace('-', '–')} →</a>
+          : <span>Most recent season</span>}
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap" style="max-width: 1080px;">
+
+  {marchingShow && marchingResults.length > 0 && (
+    <section class="season-sec">
+      <div class="season-sec__head">
+        <h2>Little Hawk Marching Band</h2>
+        <div class="season-sec__count">{marchingResults.length} result{marchingResults.length === 1 ? '' : 's'}</div>
+      </div>
+      <div class="marching-feature">
+        <div class="marching-feature__media" role="img" aria-label={`Marching show: ${marchingShow}`}></div>
+        <div>
+          <h3>"{marchingShow}"</h3>
+          <ul>
+            {marchingResults.map(r => <li>{r}</li>)}
+          </ul>
+          {marchingNotes.length > 0 && (
+            <div class="marching-feature__notes">
+              {marchingNotes.map(n => <div>{n}</div>)}
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {ensembleEntries.length > 0 && (
+    <section class="season-sec">
+      <div class="season-sec__head">
+        <h2>Ensemble accomplishments</h2>
+      </div>
+      <div class="ensemble-results">
+        {ensembleEntries.map(([name, items]) => (
+          <div class="ensemble-result">
+            <h3>{titleCase(name)}</h3>
+            <ul>{items.map(i => <li>{i}</li>)}</ul>
+          </div>
+        ))}
+      </div>
+    </section>
+  )}
+
+  {d.all_state.length > 0 && (
+    <section class="season-sec">
+      <div class="season-sec__head">
+        <h2>All-State Band &amp; Orchestra</h2>
+        <div class="season-sec__count">{d.all_state.length} members</div>
+      </div>
+      <div class="member-grid">
+        {d.all_state.map(m => (
+          <div class="member">
+            <div class="member__name">{m.name}</div>
+            <div class="member__detail">
+              {[m.grade, m.instrument].filter(Boolean).join(' · ')}
+            </div>
+            {m.note && <div class="member__note">{m.note}</div>}
+          </div>
+        ))}
+      </div>
+    </section>
+  )}
+
+  {d.all_state_jazz.length > 0 && (
+    <section class="season-sec">
+      <div class="season-sec__head">
+        <h2>All-State Jazz</h2>
+        <div class="season-sec__count">{d.all_state_jazz.length} {d.all_state_jazz.length === 1 ? 'member' : 'members'}</div>
+      </div>
+      <div class="member-grid">
+        {d.all_state_jazz.map(m => (
+          <div class="member">
+            <div class="member__name">{m.name}</div>
+            <div class="member__detail">{[m.grade, m.instrument].filter(Boolean).join(' · ')}</div>
+            {m.note && <div class="member__note">{m.note}</div>}
+          </div>
+        ))}
+      </div>
+    </section>
+  )}
+
+  {d.seiba.length > 0 && (
+    <section class="season-sec">
+      <div class="season-sec__head">
+        <h2>SEIBA Honor Band</h2>
+        <div class="season-sec__count">{d.seiba.length} members</div>
+      </div>
+      <div class="member-grid">
+        {d.seiba.map(m => (
+          <div class="member">
+            <div class="member__name">{m.name}</div>
+            <div class="member__detail">{[m.grade, m.instrument].filter(Boolean).join(' · ')}</div>
+          </div>
+        ))}
+      </div>
+    </section>
+  )}
+
+  {(d.uni_honor.length > 0 || d.iowa_honor.length > 0) && (
+    <section class="season-sec">
+      <div class="season-sec__head">
+        <h2>Honor Bands</h2>
+      </div>
+      {d.uni_honor.length > 0 && (
+        <>
+          <h3 style="font-family: 'Fraunces', serif; font-weight: 500; font-size: 1.2rem; margin: 1rem 0 1rem;">UNI Honor Band — {d.uni_honor.length}</h3>
+          <div class="member-grid">
+            {d.uni_honor.map(m => (
+              <div class="member">
+                <div class="member__name">{m.name}</div>
+                <div class="member__detail">{[m.grade, m.instrument].filter(Boolean).join(' · ')}</div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+      {d.iowa_honor.length > 0 && (
+        <>
+          <h3 style="font-family: 'Fraunces', serif; font-weight: 500; font-size: 1.2rem; margin: 2.5rem 0 1rem;">University of Iowa Honor Band — {d.iowa_honor.length}</h3>
+          <div class="member-grid">
+            {d.iowa_honor.map(m => (
+              <div class="member">
+                <div class="member__name">{m.name}</div>
+                <div class="member__detail">{[m.grade, m.instrument].filter(Boolean).join(' · ')}</div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+    </section>
+  )}
+
+  {d.awards.length > 0 && (
+    <section class="season-sec">
+      <div class="season-sec__head">
+        <h2>Awards</h2>
+      </div>
+      <div class="awards-grid">
+        {d.awards.map(a => (
+          <div class="award">
+            <h3>{clean(a.category)}</h3>
+            <ul>{cleanList(a.recipients).map(r => <li>{r}</li>)}</ul>
+          </div>
+        ))}
+      </div>
+    </section>
+  )}
+
+</div>
+
+</Base>

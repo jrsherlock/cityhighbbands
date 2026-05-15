@@ -1,0 +1,83 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const all = await getCollection('seasons');
+// newest first
+all.sort((a, b) => b.data.start_year - a.data.start_year);
+
+// Strip the cosmetic \* noise the migrator leaves in some legacy entries.
+const clean = (s: string) => s.replace(/\\\*+/g, '').replace(/\*+/g, '').trim();
+
+// Group by decade
+type Row = typeof all[number];
+const decades = new Map<number, Row[]>();
+for (const s of all) {
+  const d = Math.floor(s.data.start_year / 10) * 10;
+  if (!decades.has(d)) decades.set(d, []);
+  decades.get(d)!.push(s);
+}
+const decadeKeys = [...decades.keys()].sort((a, b) => b - a);
+
+const totalSeasons = all.length;
+const firstYear = all[all.length - 1]?.data.start_year ?? 1980;
+const latestYear = all[0]?.data.year_range ?? '2024-2025';
+
+function teaserStats(s: Row) {
+  const stats: string[] = [];
+  if (s.data.all_state.length) stats.push(`<strong>${s.data.all_state.length}</strong> All-State`);
+  if (s.data.seiba.length) stats.push(`<strong>${s.data.seiba.length}</strong> SEIBA`);
+  if (s.data.uni_honor.length) stats.push(`<strong>${s.data.uni_honor.length}</strong> UNI Honor`);
+  if (s.data.iowa_honor.length) stats.push(`<strong>${s.data.iowa_honor.length}</strong> Iowa Honor`);
+  return stats;
+}
+---
+<Base title="History — Iowa City High Bands">
+
+<section class="history-hero">
+  <div class="wrap">
+    <div class="meta">{firstYear} — {latestYear.split('-')[1]}</div>
+    <h1>{totalSeasons} seasons of City High Bands.</h1>
+    <p class="lede" style="max-width: 56ch;">
+      The institutional memory of the program — marching shows, ensemble results, honor band selections, and graduating-class awards. Browse by decade.
+    </p>
+    <nav class="decade-nav" aria-label="Decade navigation">
+      {decadeKeys.map(d => (
+        <a class="decade-chip" href={`#d${d}`}>
+          {d}s <span class="count">{decades.get(d)!.length}</span>
+        </a>
+      ))}
+    </nav>
+  </div>
+</section>
+
+<section class="wrap timeline">
+  {decadeKeys.map(d => (
+    <div class="timeline__decade" id={`d${d}`}>
+      <h2>{d}s</h2>
+      <div class="timeline__decade-sub">
+        {decades.get(d)!.length} season{decades.get(d)!.length === 1 ? '' : 's'}
+      </div>
+      {decades.get(d)!.map(s => {
+        const show = clean(s.data.marching?.show ?? '');
+        const stats = teaserStats(s);
+        return (
+          <a class="timeline__row" href={`/history/${s.slug}`}>
+            <div class="timeline__year">{s.data.year_range.replace('-', ' – ')}</div>
+            <div class="timeline__main">
+              {show
+                ? <div class="timeline__show">"{show}"</div>
+                : <div class="timeline__show timeline__show-empty">Concert / jazz only</div>}
+              {stats.length > 0 && (
+                <div class="timeline__stats" set:html={stats.join(' · ')}></div>
+              )}
+            </div>
+            <div class="timeline__arrow" aria-hidden="true">→</div>
+          </a>
+        );
+      })}
+    </div>
+  ))}
+</section>
+
+</Base>

@@ -1,0 +1,45 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const directors = await getCollection('directors');
+// Map slug -> first paragraph for the excerpt card.
+const excerpts: Record<string, string> = {};
+for (const d of directors) {
+  const body = (d.body ?? '').trim();
+  const firstPara = body.split(/\n\s*\n/).find(p => p.trim().length > 80) ?? body;
+  excerpts[d.slug] = firstPara.replace(/\*\*/g, '').replace(/\\\*+/g, '').trim();
+}
+---
+<Base title="Directors — Iowa City High Bands">
+
+<section class="history-hero">
+  <div class="wrap">
+    <div class="crumb"><a href="/">Home</a> · The Program</div>
+    <h1>Directors</h1>
+    <p class="lede" style="max-width: 56ch;">
+      The Iowa City High band program is led by two co-directors who share teaching, conducting, and ensemble responsibilities across concert, marching, and jazz.
+    </p>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="directors-index">
+    {directors.map(d => (
+      <a class="director-card" href={`/directors/${d.slug}`}>
+        <div class="director-card__photo">
+          {d.data.photo && (
+            <img src={d.data.photo.startsWith('/assets/') ? d.data.photo : d.data.photo} alt={d.data.name} loading="lazy" />
+          )}
+        </div>
+        <div>
+          <h3>{d.data.name.replace(/^Mr\.\s+/, '').replace(/^Ms\.\s+/, '')}</h3>
+          <div class="director-card__role">{d.data.role}</div>
+          <div class="director-card__excerpt">{excerpts[d.slug]}</div>
+        </div>
+      </a>
+    ))}
+  </div>
+</section>
+
+</Base>

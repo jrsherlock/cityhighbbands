@@ -1,0 +1,144 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const ensembles = await getCollection('ensembles');
+  return ensembles.map(e => ({ params: { slug: e.slug }, props: { ensemble: e } }));
+}
+
+const { ensemble } = Astro.props;
+const ens = ensemble.data;
+const ensSlug = ensemble.slug;
+
+// Pull all programs for this ensemble; sort newest first; group by season.
+const allPrograms = await getCollection('programs', p => p.data.ensemble_slug === ensSlug);
+allPrograms.sort((a, b) => (b.data.date_iso || '').localeCompare(a.data.date_iso || ''));
+
+// Group by season (e.g. "2024-2025")
+const bySeason = new Map<string, typeof allPrograms>();
+for (const p of allPrograms) {
+  const key = p.data.season || 'undated';
+  if (!bySeason.has(key)) bySeason.set(key, []);
+  bySeason.get(key)!.push(p);
+}
+const seasonsSorted = [...bySeason.entries()].sort((a, b) => b[0].localeCompare(a[0]));
+
+// Curation policy from feedback: current + previous prominent; older collapsed.
+const PROMINENT_LIMIT = 2;
+const prominent = seasonsSorted.slice(0, PROMINENT_LIMIT);
+const archive = seasonsSorted.slice(PROMINENT_LIMIT);
+
+const heroPhrase: Record<string, string> = {
+  'wind-ensemble': "City High's premier auditioned concert ensemble. Selected to perform at the 97th annual Iowa Bandmasters Conference and the 2025 UNI Wind Band Invitational.",
+  'symphony-band': "City High's middle auditioned concert ensemble, consistently earning Division 1 ratings at IHSMA State Large Group Festival.",
+  'concert-band': "An open ensemble where students continue developing as performers in a strong concert-band tradition.",
+  'marching-band': "The Little Hawk Marching Band performs at home football games, in the fall competitive marching circuit, and at parades and community events.",
+  'jazz-ensemble': "The premier auditioned jazz ensemble, a regular at the Iowa Jazz Championships and the KCCK Corridor Jazz Project.",
+  'jazz-lab': "An auditioned second jazz ensemble emphasizing improvisation, ensemble blend, and the standard jazz repertoire.",
+  'jazz-collective': "Our second-band jazz ensemble — a competitive home for developing jazz musicians.",
+  'jazz-workshop': "Open jazz ensemble for students new to jazz idioms or wanting more reading and improvisation time.",
+};
+---
+<Base title={`${ens.name} — Iowa City High Bands`}>
+
+<section class="ensemble-hero">
+  <div class="wrap">
+    <div class="ensemble-hero__grid">
+      <div>
+        <div class="crumb"><a href="/ensembles">Ensembles</a> · {ens.category.charAt(0).toUpperCase() + ens.category.slice(1)}</div>
+        <h1>{ens.name}</h1>
+        <p class="lede">{heroPhrase[ensSlug] || ens.summary}</p>
+        <p class="ensemble-hero__sub">
+          {ens.conductors.length > 0 && <><strong>Conductor</strong> {ens.conductors.join(', ')}<br /></>}
+          <strong>Rehearses</strong> during the school day · Band Room<br />
+          {ens.category === 'concert' && <><strong>Audition</strong> placement audition required</>}
+          {ens.category === 'marching' && <><strong>Membership</strong> open to all band students</>}
+          {ens.category === 'jazz' && <><strong>Audition</strong> required for placement</>}
+        </p>
+        <div class="ensemble-hero__cta">
+          <a class="btn btn-outline" href="#current">Current repertoire</a>
+          <a class="btn btn-outline" href="/contact">Contact the director</a>
+        </div>
+      </div>
+      <div class="ensemble-hero__media" role="img" aria-label={`${ens.name} in performance`}></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap" style="max-width: 920px;">
+
+    {prominent.map(([seasonKey, programs], idx) => (
+      <article class="season" id={idx === 0 ? 'current' : undefined}>
+        <div class="season__head">
+          <div class="season__year">{seasonKey === 'undated' ? 'Undated' : seasonKey.replace('-', ' – ')}</div>
+          <div class="season__theme">{idx === 0 ? 'Current season' : 'Previous season'}</div>
+        </div>
+
+        {programs.map(p => (
+          <div class="program">
+            <div class="program__meta">
+              {p.data.event_name}{p.data.date_raw && <> · {p.data.date_raw}</>}
+            </div>
+            {p.data.program_title && <div class="program__name">{p.data.program_title}</div>}
+            <ul class="pieces">
+              {p.data.pieces.map(piece => (
+                <li>
+                  <div>
+                    <span class="piece__title">{piece.title}</span>
+                    {piece.year && <> <span class="piece__year">{piece.year}</span></>}
+                  </div>
+                  <div class="piece__composer">
+                    {piece.composer}{piece.arranger && <> · arr. {piece.arranger}</>}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </article>
+    ))}
+
+    {archive.length > 0 && (
+      <details>
+        <summary class="archive-toggle">
+          Earlier seasons ({archive[archive.length - 1][0].split('-')[0]} – {archive[0][0].split('-')[1]}) →
+        </summary>
+        <div style="margin-top: 2rem;">
+          {archive.map(([seasonKey, programs]) => (
+            <article class="season">
+              <div class="season__head">
+                <div class="season__year">{seasonKey.replace('-', ' – ')}</div>
+              </div>
+              {programs.map(p => (
+                <div class="program">
+                  <div class="program__meta">{p.data.event_name}{p.data.date_raw && <> · {p.data.date_raw}</>}</div>
+                  {p.data.program_title && <div class="program__name">{p.data.program_title}</div>}
+                  <ul class="pieces">
+                    {p.data.pieces.map(piece => (
+                      <li>
+                        <div>
+                          <span class="piece__title">{piece.title}</span>
+                          {piece.year && <> <span class="piece__year">{piece.year}</span></>}
+                        </div>
+                        <div class="piece__composer">{piece.composer}{piece.arranger && <> · arr. {piece.arranger}</>}</div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </article>
+          ))}
+        </div>
+      </details>
+    )}
+
+    {allPrograms.length === 0 && (
+      <p class="lede">Repertoire and performances for this ensemble will be posted here as the season progresses.</p>
+    )}
+
+  </div>
+</section>
+
+</Base>

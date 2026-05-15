@@ -1,0 +1,138 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const ensembles = await getCollection('ensembles');
+const ORDER = ['wind-ensemble','symphony-band','concert-band','marching-band','jazz-ensemble','jazz-lab','jazz-collective','jazz-workshop'];
+const ordered = ORDER.map(slug => ensembles.find(e => e.slug === slug)!).filter(Boolean);
+const labelByConductor = (slug: string) => ({
+  'wind-ensemble': 'Mike Kowbel · auditioned',
+  'symphony-band': 'Aaron Ottmar · auditioned',
+  'concert-band': 'Mike Kowbel · open',
+  'marching-band': 'All band students',
+  'jazz-ensemble': 'Aaron Ottmar · auditioned',
+  'jazz-lab': 'Aaron Ottmar · auditioned',
+  'jazz-collective': 'Aaron Ottmar · second band',
+  'jazz-workshop': 'Mike Kowbel · open',
+}[slug] || '');
+---
+<Base title="Iowa City High Bands — The School That Leads">
+
+<section class="hero" aria-label="Welcome">
+  <div class="hero__media" role="img" aria-label="Little Hawk Marching Band performing at twilight"></div>
+  <div class="hero__inner">
+    <div class="meta">2025 – 2026 Season</div>
+    <h1 class="display">A program at the peak of its run.</h1>
+    <p>Concert, jazz, and marching ensembles under the direction of Mike Kowbel and Aaron Ottmar, serving more than 250 student musicians at Iowa City High.</p>
+    <div class="hero__ctas">
+      <a href="/calendar" class="btn btn-primary">Upcoming concerts</a>
+      <a href="/program" class="btn btn-ghost">Join the band →</a>
+    </div>
+  </div>
+</section>
+
+<section class="upnext" aria-label="Upcoming events">
+  <div class="wrap upnext__grid">
+    <div class="upnext__label"><div class="meta">Next up</div></div>
+    <div class="upnext__events">
+      <article class="event">
+        <div class="event__date" aria-hidden="true"><span>Dec</span><strong>18</strong></div>
+        <div><span class="event__title">December Band Concert — "Scenes from Japan"</span><span class="event__meta">Opstad Auditorium · 7:00 PM</span></div>
+      </article>
+      <article class="event">
+        <div class="event__date" aria-hidden="true"><span>Feb</span><strong>14</strong></div>
+        <div><span class="event__title">All-Iowa Concert Band Festival</span><span class="event__meta">Ames, IA · Wind Ensemble &amp; Symphony</span></div>
+      </article>
+      <article class="event">
+        <div class="event__date" aria-hidden="true"><span>Apr</span><strong>18</strong></div>
+        <div><span class="event__title">UNI Wind Band Invitational</span><span class="event__meta">Cedar Falls · Wind Ensemble</span></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-head__title">
+        <div class="meta">Eight ensembles</div>
+        <h2>Every student finds their seat.</h2>
+      </div>
+      <a class="section-head__more" href="/ensembles">All ensembles →</a>
+    </div>
+    <div class="ensembles-grid">
+      {ordered.map(e => (
+        <a class="ensemble-card" href={`/ensembles/${e.slug}`}>
+          <div class="ensemble-card__img" aria-hidden="true"></div>
+          <div class="ensemble-card__cat">{e.data.category.charAt(0).toUpperCase() + e.data.category.slice(1)}</div>
+          <div class="ensemble-card__title">{e.data.name}</div>
+          <div class="ensemble-card__sub">{labelByConductor(e.slug)}</div>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section class="section section--band">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-head__title">
+        <div class="meta">2024 – 2025</div>
+        <h2>A season of distinction.</h2>
+      </div>
+      <a class="section-head__more" href="/history">Full history →</a>
+    </div>
+    <div class="honors">
+      <div class="honor">
+        <h3>Concert</h3>
+        <ul>
+          <li><span>Wind Ensemble — UNI Wind Band Invitational</span><span>2025</span></li>
+          <li><span>Wind Ensemble — Division 1, IHSMA State</span><span>2025</span></li>
+          <li><span>Symphony Band — Division 1, IHSMA State</span><span>2025</span></li>
+          <li><span>Concert Band — Division 1, IHSMA State</span><span>2025</span></li>
+          <li><span>All-State Band &amp; Orchestra — 23 students</span><span>2024</span></li>
+        </ul>
+      </div>
+      <div class="honor">
+        <h3>Marching &amp; Jazz</h3>
+        <ul>
+          <li><span>Marching Band — "Cirque do Soleil," 2nd place Class 4A</span><span>2024</span></li>
+          <li><span>Music on the Mississippi — Best Drum Majors</span><span>2024</span></li>
+          <li><span>Jazz Ensemble — 1st place, Liberty Jazz Festival</span><span>2025</span></li>
+          <li><span>Jazz Ensemble — 1st place, Coe College Jazz Summit</span><span>2025</span></li>
+          <li><span>SEIBA Honor Band — 20 students</span><span>2024</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-head__title">
+        <div class="meta">Get involved</div>
+        <h2>It takes a community to fill a band room.</h2>
+      </div>
+    </div>
+    <div class="support-grid">
+      <div class="support-card">
+        <h3>Donate</h3>
+        <p>Every gift — large or small — funds instruments, music, travel, and the things that turn good band rooms into great ones.</p>
+        <a href="https://www.myschoolbucks.com/ver2/prdembd?ref=ZZHVZSLK0W05OC7_ZZ5WAHBE5K2Q1LH">Give to City High Bands</a>
+      </div>
+      <div class="support-card">
+        <h3>Volunteer with BACH</h3>
+        <p>Band Associates of City High welcomes parents, alumni, and community members. Meetings monthly. Real impact.</p>
+        <a href="/support/bach">Meet BACH</a>
+      </div>
+      <div class="support-card">
+        <h3>Parking lot clean-ups</h3>
+        <p>Our largest sustaining fundraiser. A handful of mornings per year, and it directly underwrites every student's experience.</p>
+        <a href="/support/parking-lot-clean-ups">Sign up for a shift</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</Base>
