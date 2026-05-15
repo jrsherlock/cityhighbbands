@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { getCollection } from 'astro:content';
+import { ensembleImage } from '../../lib/ensemble-images';
 
 const ensembles = await getCollection('ensembles');
 const ORDER = ['wind-ensemble','symphony-band','concert-band','marching-band','jazz-ensemble','jazz-lab','jazz-collective','jazz-workshop'];
@@ -88,7 +89,9 @@ const directors = await getCollection('directors');
     <div class="ensembles-grid">
       {ordered.map(e => (
         <a class="ensemble-card" href={`/ensembles/${e.slug}`}>
-          <div class="ensemble-card__img" aria-hidden="true"></div>
+          <div class="ensemble-card__img">
+            <img src={ensembleImage(e.slug)} alt="" loading="lazy" />
+          </div>
           <div class="ensemble-card__cat">{e.data.category.charAt(0).toUpperCase() + e.data.category.slice(1)}</div>
           <div class="ensemble-card__title">{e.data.name}</div>
         </a>

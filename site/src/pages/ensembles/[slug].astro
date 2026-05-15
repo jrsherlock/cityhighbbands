@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { getCollection } from 'astro:content';
+import { ensembleImage } from '../../lib/ensemble-images';
 
 export async function getStaticPaths() {
   const ensembles = await getCollection('ensembles');
@@ -61,7 +62,9 @@ const heroPhrase: Record<string, string> = {
           <a class="btn btn-outline" href="/contact">Contact the director</a>
         </div>
       </div>
-      <div class="ensemble-hero__media" role="img" aria-label={`${ens.name} in performance`}></div>
+      <div class="ensemble-hero__media">
+        <img src={ensembleImage(ensSlug)} alt="" loading="eager" />
+      </div>
     </div>
   </div>
 </section>
