@@ -360,10 +360,11 @@ p { margin: 0 0 1.2em; max-width: var(--max-prose); }
 .ensemble-card:hover { color: var(--ink); }
 .ensemble-card:hover .ensemble-card__title { color: var(--hawk); }
 .ensemble-card__img {
-  aspect-ratio: 4 / 5;
-  background:
-    linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.4)),
-    linear-gradient(135deg, #2c2017, #5a3622);
+  /* Landscape to match the trading-card-style ensemble artwork.
+     Source images are 1.78:1 or 2.36:1; 16:9 fits the first set perfectly
+     and only trims a thin sliver off the sides of the wider set. */
+  aspect-ratio: 16 / 9;
+  background: var(--paper-2);
   margin-bottom: 1rem;
   position: relative;
   overflow: hidden;
@@ -374,6 +375,7 @@ p { margin: 0 0 1.2em; max-width: var(--max-prose); }
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   display: block;
   transition: transform 500ms ease;
 }
@@ -532,10 +534,8 @@ p { margin: 0 0 1.2em; max-width: var(--max-prose); }
   align-items: center;
 }
 .ensemble-hero__media {
-  aspect-ratio: 4 / 5;
-  background:
-    linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.3)),
-    linear-gradient(135deg, #1c2030, #3a4b6b);
+  aspect-ratio: 16 / 9;
+  background: var(--paper-2);
   position: relative;
   overflow: hidden;
 }
