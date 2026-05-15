@@ -16,14 +16,19 @@
 const PARAMS = '?w=1000&auto=format&fit=crop&q=80';
 
 export const ensembleImages: Record<string, string> = {
+  // Concert & marching: hot-linked Unsplash photography.
   'wind-ensemble':    `https://images.unsplash.com/photo-1519892300165-cb5542fb47c7${PARAMS}`,
   'symphony-band':    `https://images.unsplash.com/photo-1485579149621-3123dd979885${PARAMS}`,
   'concert-band':     `https://images.unsplash.com/photo-1573871669414-010dbf73ca84${PARAMS}`,
   'marching-band':    `https://images.unsplash.com/photo-1511735111819-9a3f7709049c${PARAMS}`,
-  'jazz-ensemble':    `https://images.unsplash.com/photo-1465847899084-d164df4dedc6${PARAMS}`,
-  'jazz-lab':         `https://images.unsplash.com/photo-1567427017947-545c5f8d16ad${PARAMS}`,
-  'jazz-collective':  `https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f${PARAMS}`,
-  'jazz-workshop':    `https://images.unsplash.com/photo-1511192336575-5a79af67a629${PARAMS}`,
+  // Jazz: local SVG placeholders with explicit jazz iconography, one per
+  // ensemble (sax / trumpet / upright bass / piano). These were chosen over
+  // hot-linked stock so each card is unambiguously jazz on first glance.
+  // Swap with photography by replacing the URL with `/assets/ensembles/<slug>.jpg`.
+  'jazz-ensemble':    `/assets/ensembles/jazz-ensemble.svg`,
+  'jazz-lab':         `/assets/ensembles/jazz-lab.svg`,
+  'jazz-collective':  `/assets/ensembles/jazz-collective.svg`,
+  'jazz-workshop':    `/assets/ensembles/jazz-workshop.svg`,
 };
 
 export function ensembleImage(slug: string): string {

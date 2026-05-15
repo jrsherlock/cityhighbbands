@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Jazz Workshop placeholder">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1f1f2c"/>
+      <stop offset="55%" stop-color="#3a3a5a"/>
+      <stop offset="100%" stop-color="#7a7aa0"/>
+    </linearGradient>
+    <radialGradient id="r" cx="50%" cy="40%" r="70%">
+      <stop offset="0%" stop-color="#d8d8ff" stop-opacity="0.4"/>
+      <stop offset="60%" stop-color="#d8d8ff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="1000" fill="url(#g)"/>
+  <rect width="800" height="1000" fill="url(#r)"/>
+  <!-- Piano keys, three-quarters perspective -->
+  <g transform="translate(120, 230)" fill="#f4ddb3" fill-opacity="0.88">
+    <!-- White keys row -->
+    <g>
+      <rect x="0"   y="0" width="80" height="260" rx="4" fill="#f5e9c8"/>
+      <rect x="82"  y="0" width="80" height="260" rx="4" fill="#f5e9c8"/>
+      <rect x="164" y="0" width="80" height="260" rx="4" fill="#f5e9c8"/>
+      <rect x="246" y="0" width="80" height="260" rx="4" fill="#f5e9c8"/>
+      <rect x="328" y="0" width="80" height="260" rx="4" fill="#f5e9c8"/>
+      <rect x="410" y="0" width="80" height="260" rx="4" fill="#f5e9c8"/>
+      <rect x="492" y="0" width="80" height="260" rx="4" fill="#f5e9c8"/>
+    </g>
+    <!-- Black keys -->
+    <g fill="#1f1f2c">
+      <rect x="56"  y="0" width="50" height="160" rx="3"/>
+      <rect x="138" y="0" width="50" height="160" rx="3"/>
+      <rect x="302" y="0" width="50" height="160" rx="3"/>
+      <rect x="384" y="0" width="50" height="160" rx="3"/>
+      <rect x="466" y="0" width="50" height="160" rx="3"/>
+    </g>
+  </g>
+  <!-- Music note ornament -->
+  <g fill="#f4ddb3" fill-opacity="0.65" transform="translate(620, 130)">
+    <ellipse cx="0" cy="0" rx="20" ry="14" transform="rotate(-22)"/>
+    <rect x="18" y="-70" width="5" height="74"/>
+    <path d="M22,-70 q26,4 22,32" stroke="#f4ddb3" stroke-width="5" fill="none"/>
+  </g>
+  <text x="60" y="780" font-family="Georgia, 'Times New Roman', serif" font-size="220" font-weight="500" font-style="italic" fill="#f4ddb3" fill-opacity="0.95" letter-spacing="-8">Jazz</text>
+  <text x="62" y="840" font-family="-apple-system, system-ui, sans-serif" font-size="22" font-weight="500" letter-spacing="6" fill="#f4ddb3" fill-opacity="0.6">WORKSHOP</text>
+</svg>
